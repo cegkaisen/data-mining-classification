@@ -121,6 +121,9 @@ def validate_training_data(df: pd.DataFrame) -> None:
     if TARGET_COLUMN not in df.columns:
         raise ValueError(f"Training data must include target column '{TARGET_COLUMN}'.")
 
+    if df[TARGET_COLUMN].isna().any():
+        raise ValueError(f"Training target column '{TARGET_COLUMN}' contains missing values.")
+
     unexpected_labels = sorted(set(df[TARGET_COLUMN].dropna()) - set(TARGET_LABELS))
     if unexpected_labels:
         raise ValueError(
