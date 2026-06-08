@@ -23,17 +23,14 @@ env/
 
 # Generated outputs
 outputs/*
-!outputs/README.md
 !outputs/predictions.csv
 !outputs/figures/
 outputs/figures/*
-!outputs/figures/README.md
 !outputs/figures/class_distribution.png
 !outputs/figures/feature_importance.png
 
 # Generated reports
 reports/*
-!reports/README.md
 !reports/*.md
 reports/report_draft_tr.md
 reports/report_notes_tr.md
