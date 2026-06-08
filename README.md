@@ -1,22 +1,16 @@
 # Data Mining Assignment 4 - Classification
 
-Bu proje gelir tahmini (income prediction) icin ikili siniflandirma (binary classification) assignment calismasidir.
+This repository contains the code and final artefacts for the income classification assignment.
 
-## Veri Dosyalari
+## Repository
 
-- `income.csv`: egitim verisi ve `income` hedef kolonu.
-- `income_test.csv`: tahmin uretilecek test verisi.
-- `predictions_template.csv`: teslim tahmin dosyasi formati.
-- `Data Mining Assignment 4 - Classification.pdf`: assignment aciklamasi.
+GitHub: https://github.com/cegkaisen/data-mining-classification
 
-## Calisma Yapisi
+## Data
 
-- `docs/ai/`: AI destekli muhendislik (AI-assisted engineering) baglam ve workflow dosyalari.
-- `notebooks/`: kesifsel analiz (EDA), model deneyleri ve rapora girecek analizler.
-- `src/`: tekrar kullanilabilir Python kodu.
-- `outputs/`: uretilen metrikler, tahminler ve ara ciktilar.
-- `outputs/figures/`: raporda kullanilacak gorseller.
-- `reports/`: final rapor taslaklari ve PDF ciktisi.
+- `income.csv`: training data with the `income` target column.
+- `income_test.csv`: new instances for final prediction.
+- `predictions_template.csv`: required submission format.
 
 ## Setup
 
@@ -26,15 +20,23 @@ python -m venv .venv
 .\.venv\Scripts\python.exe scripts\smoke_test.py
 ```
 
-Bu proje Python 3.12 ile hazirlanmistir. Sanal ortam (virtual environment) `.venv/` Git disinda tutulur.
+The project was prepared with Python 3.12.
 
-## Ana Workflow
+## Main Files
 
-1. Veriyi incele ve preprocessing pipeline'i kur.
-2. En az iki model egit; en az biri ensemble model olsun.
-3. Overfitting, feature selection ve hyperparameter deneylerini kaydet.
-4. Final modeli sec ve SHAP/LIME ile acikla.
-5. `income_test.csv` icin prediction CSV uret.
-6. Fairness analizini ve maksimum 4 sayfalik raporu tamamla.
+- `notebooks/01_eda.ipynb`: data exploration.
+- `notebooks/02_model_experiments.ipynb`: model comparison, tuning, ablation, and fairness analysis.
+- `notebooks/03_explainability_and_predictions.ipynb`: SHAP explainability and final predictions.
+- `src/`: reusable preprocessing, modeling, evaluation, and fairness helpers.
+- `scripts/`: validation checks.
+- `reports/report_final_en.md`: final report source.
+- `outputs/predictions.csv`: final prediction file.
 
-Detayli AI workflow'u icin `docs/ai/workflow.md` dosyasina bak.
+## Validation
+
+```powershell
+.\.venv\Scripts\python.exe scripts\check_preprocessing.py
+.\.venv\Scripts\python.exe scripts\check_evaluation.py
+.\.venv\Scripts\python.exe scripts\check_modeling.py
+.\.venv\Scripts\python.exe scripts\check_predictions.py
+```

@@ -24,14 +24,24 @@ env/
 # Generated outputs
 outputs/*
 !outputs/README.md
+!outputs/predictions.csv
 !outputs/figures/
 outputs/figures/*
 !outputs/figures/README.md
+!outputs/figures/class_distribution.png
+!outputs/figures/feature_importance.png
 
 # Generated reports
 reports/*
 !reports/README.md
 !reports/*.md
+reports/report_draft_tr.md
+
+# Internal planning and assignment prompt files
+.codex/
+docs/
+AGENTS.md
+Data Mining Assignment 4 - Classification.pdf
 
 # Model artifacts
 models/
