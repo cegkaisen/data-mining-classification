@@ -34,3 +34,16 @@
 - Final aday HistGradientBoosting / tuned_full olarak secildi; validation AUC 0.854, high recall 0.628.
 - Final aday icin validation setinde sex bazli positive prediction rate gap 0.254; fairness (adalet) tartismasinda bu sayi kullanilacak.
 - `income_test.csv` model secimi, tuning veya threshold belirleme icin kullanilmadi.
+
+## T9 - Explainability
+
+- Final model icin explainability (aciklanabilirlik) validation seti uzerinde uretildi; `income_test.csv` aciklama veya model secimi icin kullanilmadi.
+- SHAP kullanildi.
+- Global feature importance `outputs/explainability_global_importance.csv` ve `outputs/figures/feature_importance.png` olarak uretildi.
+- Local explanation dosyalari dogru high ve dogru low validation prediction icin uretildi.
+
+## T10 - Final prediction
+
+- Final pipeline tum `income.csv` uzerinde refit edildi ve `income_test.csv` icin `outputs/predictions.csv` uretildi.
+- Predicted high count/rate: 1028 / 0.514; predicted low count: 972.
+- Test accuracy iddia edilmedi; test setinde label olmadigi icin performans yorumu validation/CV sonuclarina dayaniyor.
