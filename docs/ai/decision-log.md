@@ -286,3 +286,16 @@ Planlama, PRD, technical design ve task breakdown asamalari artik implementation
 
 Sonuclar:
 Gelecekteki commitler anlamli is birimleri tamamlandiginda, alakasiz degisiklikleri karistirmadan alinacak.
+
+2026-06-08 - T1 environment ve project bootstrap tamamlandi
+Baglam:
+Implementation ilk taski T1 icin `.venv`, dependency kurulumu, `src` package bootstrap, smoke test ve README setup notu istendi.
+
+Karar:
+Python 3.12.3 ile `.venv` olusturuldu. `requirements.txt` paketleri `.venv` icine kuruldu. `src/__init__.py`, `src/project_paths.py` ve `scripts/smoke_test.py` eklendi. README'ye setup komutlari eklendi.
+
+Gerekce:
+Bu altyapi T2 ve sonraki tasklar icin tekrar uretilebilir ve izole bir calisma ortami saglar.
+
+Sonuclar:
+`pip check` temiz gecti. Smoke test `src`, required data files ve ana dependency importlarini dogruladi. SHAP ve LIME importlari basarili.

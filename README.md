@@ -18,6 +18,16 @@ Bu proje gelir tahmini (income prediction) icin ikili siniflandirma (binary clas
 - `outputs/figures/`: raporda kullanilacak gorseller.
 - `reports/`: final rapor taslaklari ve PDF ciktisi.
 
+## Setup
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts\smoke_test.py
+```
+
+Bu proje Python 3.12 ile hazirlanmistir. Sanal ortam (virtual environment) `.venv/` Git disinda tutulur.
+
 ## Ana Workflow
 
 1. Veriyi incele ve preprocessing pipeline'i kur.

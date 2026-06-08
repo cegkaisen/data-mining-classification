@@ -61,10 +61,11 @@ Bu dosya AI destekli muhendislik (AI-assisted engineering) icin projenin calisan
 
 ## Bilinen Ortam Durumu
 
-- Sistem Python ortaminda `pandas` mevcut.
-- Baslangicta sistem Python ortaminda `sklearn` gorulmedi.
+- T1 sonunda `.venv` Python 3.12.3 ile olusturuldu.
+- `.venv` icinde `requirements.txt` kurulumu tamamlandi.
+- Smoke test `pandas`, `numpy`, `sklearn`, `matplotlib`, `seaborn`, `nbformat`, `nbconvert`, `shap` ve `lime` importlarini dogruladi.
 - Bundled runtime icinde PDF okumak icin `pypdf` mevcut.
-- Modelleme asamasinda `scikit-learn`, `matplotlib`, `seaborn` ve SHAP/LIME ihtiyaci tekrar kontrol edilmeli.
+- `.venv` Git disinda tutuluyor.
 
 ## Acik Sorular
 
