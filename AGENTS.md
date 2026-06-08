@@ -50,8 +50,27 @@ Ana hedefler:
 9. Test tahminlerini ve rapor bulgularini uret.
 10. Sonuclari dogrula ve kisa ozetle.
 
+## Commit ve Self-Review Protokolu
+
+- Implementation bittikten hemen sonra commit alma.
+- Bir task bittiginde once diff'i ve dogrulama sonuclarini hazirla; kullanici isterse self-review yap.
+- Commitler review akisi tamamlandiktan sonra alinmali.
+- Kullanici commit oncesi review isterse kod degistirme; yalnizca mevcut diff/commit uzerinden degerlendirme yap.
+- Self-review su basliklari icermeli:
+  - Task scope: Degisiklikler task sinirlari icinde mi, kapsam sismesi var mi?
+  - Acceptance criteria: Planlanan kabul kriterleri karsilandi mi, eksik veya zayif kalan nokta var mi?
+  - Validation: Hangi komutlar calisti, ne dogrulandi, hangi test bosluklari kaldi?
+  - Commit risk: Commit'e girmemesi gereken dosya, ham veri degisikligi, generated output, buyuk artefact veya alakasiz degisiklik var mi?
+  - Contextual risks: Assignment, data leakage, evaluation, fairness, explainability, reproducibility veya grading acisindan dikkat edilmesi gereken riskler.
+- Self-review sonunda tek bir karar ver:
+  - `Ready to commit`: Commit icin yeterince guvenli.
+  - `Needs small fix`: Kucuk ve net bir duzeltme gerekiyor; kapsam tartismasi gerekmez.
+  - `Needs discussion`: Karar, scope veya risk kullaniciyle tartisilmeden commit edilmemeli.
+- Self-review sonrasi kullanici commit isterse, yalnizca review edilen kapsam commit edilmeli.
+- Commit mesajlari kisa ve is birimini anlatir olmali; alakasiz degisiklikler ayni commit'e karistirilmamali.
+
 ## Guvenlik Kurallari
 
-- Kullanici istemedikce commit, push veya pull request acma.
+- Commitler review akisi tamamlandiktan sonra alinmali; push veya pull request icin kullanicinin acik onayi gerekir.
 - Yikici komutlari kullanma.
 - Bagimlilik kurulumu (dependency install) gerekiyorsa once nedenini acikla ve onay iste.
