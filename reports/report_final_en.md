@@ -1,173 +1,60 @@
 # Data Mining Assignment 4 - Classification
 
-**Student:** Niyazi Cenk Genek - 20259604
-
+**Student:** Niyazi Cenk Genek - 20259604  
 **GitHub repository:** https://github.com/cegkaisen/data-mining-classification
 
----
+## 1. Problem, Data, and Preprocessing
 
-## 1. Introduction
+In this assignment, I worked on a binary income classification problem. The target is whether a person is in the `high` or `low` income class. The training file, `income.csv`, has **9000 rows** and includes the target. The test file, `income_test.csv`, has **2000 rows** and does not include labels, so I used it only at the end for prediction.
 
-This project is about predicting whether a person is in the `high` or `low` income class. The model uses the demographic and socioeconomic fields in `income.csv`, then produces predictions for the unlabeled file `income_test.csv`.
+The target classes are not fully balanced. There are 5921 `low` cases, which is **0.658** of the training data, and 3079 `high` cases, which is **0.342**. Because of this, accuracy alone would not be enough. A model could predict many `low` cases correctly and still miss too many `high` cases.
 
-I treated the task as more than a leaderboard-style classification problem. Income prediction can be sensitive, because the output might be interpreted as evidence about real people. So I checked the usual performance metrics, but I also looked at overfitting, model explanations, and gender fairness. Accuracy was useful, but it was not enough on its own.
+I used `sklearn` pipelines for preprocessing. Numeric missing values were filled with the median and then standardized. Categorical missing values were changed to a `missing` category and then one-hot encoded. I also used `handle_unknown="ignore"` so that new categories in validation or test data would not break the pipeline. The preprocessing was fitted only on the training split or inside each cross-validation fold. This was important to avoid data leakage.
 
-The implementation is organized into reusable Python code under `src/`, notebooks under `notebooks/`, and the final prediction file at `outputs/predictions.csv`.
+Two columns had a lot of missing values: `ability to speak english` and `gave birth this year`. I did not drop them immediately, because missing values can still contain useful information. Instead, I kept them in the main model and tested their effect later.
 
----
+## 2. Models and Evaluation Setup
 
-## 2. Data Exploration
+For Task 1, I trained Logistic Regression, Random Forest, and HistGradientBoosting. Random Forest and HistGradientBoosting are ensemble models, so the ensemble model requirement is covered.
 
-The training file has **9000 rows**. The separate test file, `income_test.csv`, has **2000 rows** and no target label. In the training data, the target is not perfectly balanced: `low` appears 5921 times, which is **0.658** of the data, while `high` appears 3079 times, or **0.342**.
+I first compared baseline models. After that, I tuned the models with 3-fold StratifiedKFold on the training split. The validation split was kept separate for the final comparison. I did not use `income_test.csv` for tuning, feature selection, threshold selection, or performance evaluation.
 
-That class balance shaped the evaluation. A model could look acceptable by handling the larger `low` class well, while still missing many `high` examples. Because of that, I used AUC, precision, and recall together with accuracy.
+I used validation AUC as the main selection metric. Still, I also reported accuracy, precision, and recall, because AUC does not tell the whole story at the final prediction threshold.
 
-Two columns stood out because they had many missing values:
+## 3. Results, Tuning, and Feature Selection
 
-- `ability to speak english`
-- `gave birth this year`
+The best final model was **HistGradientBoosting / tuned_full**. Its parameters were `learning_rate=0.08`, `max_iter=100`, and `max_leaf_nodes=15`.
 
-I kept them in the main dataset instead of dropping them immediately. Missing values can sometimes carry information, especially in survey-style data. Later, I tested what happens when those columns are removed.
-
-![Class distribution](../outputs/figures/class_distribution.png)
-
----
-
-## 3. Preprocessing
-
-All preprocessing was built with `sklearn` pipelines. This kept the transformations tied to the training split or training fold, which is important for avoiding leakage.
-
-The pipeline does the following:
-
-1. Fill numeric missing values with the median.
-2. Standardize numeric features.
-3. Replace categorical missing values with a `missing` category.
-4. Apply one-hot encoding to categorical variables.
-5. Ignore unknown validation or test categories safely.
-
-This setup matters because the validation data should stay unseen until evaluation time. If the imputer, scaler, or encoder were fitted before the split, the validation results would be too optimistic. The same idea also applies inside cross-validation during tuning.
-
----
-
-## 4. Classification Methods
-
-For Task 1, I compared three classifiers:
-
-1. **Logistic Regression**
-2. **Random Forest**
-3. **HistGradientBoosting**
-
-Random Forest and HistGradientBoosting both count as ensemble models, so the ensemble requirement is covered.
-
-I started with baseline models, then tuned the hyperparameters using 3-fold StratifiedKFold on the training split. The validation split was held back for the final comparison. I did not use `income_test.csv` for model choice, threshold tuning, or feature selection.
-
-The main selection metric was validation AUC. I still reported accuracy, precision, and recall for both classes, because AUC does not show the full behavior at the final prediction threshold.
-
----
-
-## 5. Model Results
-
-The strongest final candidate was **HistGradientBoosting / tuned_full**.
-
-| Model / variant | Accuracy | AUC | Precision high | Recall high | Precision low | Recall low |
+| Model / variant | Acc. | AUC | Prec. high | Rec. high | Train AUC | AUC gap |
 |---|---:|---:|---:|---:|---:|---:|
-| HistGradientBoosting / tuned_full | 0.784 | 0.854 | 0.709 | 0.628 | 0.817 | 0.866 |
-| Random Forest / sex_removed | 0.777 | 0.853 | 0.722 | 0.568 | 0.798 | 0.886 |
-| Random Forest / high_missing_removed | 0.779 | 0.853 | 0.728 | 0.565 | 0.797 | 0.890 |
+| HistGradientBoosting / tuned_full | 0.784 | 0.854 | 0.709 | 0.628 | 0.897 | 0.043 |
+| Random Forest / tuned_full | 0.776 | 0.853 | 0.725 | 0.555 | 0.909 | 0.056 |
+| Logistic Regression / tuned_full | 0.784 | 0.843 | 0.729 | 0.589 | 0.860 | 0.017 |
 
-The Random Forest variants were very close in AUC, so this was not a huge win for one model. I selected HistGradientBoosting because it had the best validation AUC and a better recall for the `high` class than the closest Random Forest alternatives.
+HistGradientBoosting had the best validation AUC and better recall for the `high` class than the tuned Random Forest. Logistic Regression had the smallest gap between train and validation AUC, but its validation AUC was lower. Random Forest had the largest gap, so it looked more overfit.
 
-Final model parameters:
+Hyperparameter tuning helped control overfitting. For the tree-based models, I limited model complexity with parameters related to depth, leaf size, learning rate, number of iterations, and leaf nodes.
 
-- `learning_rate = 0.08`
-- `max_iter = 100`
-- `max_leaf_nodes = 15`
+For feature selection, I used simple ablation tests. I removed one feature group at a time and compared the results. Removing the high-missing columns gave about **0.853** AUC, almost the same as the full model. Removing `sex` also gave about **0.853** AUC. So these feature groups were not the only reason for the model's performance.
 
----
+I also tested class imbalance handling with `class_weight="balanced"` for Logistic Regression and Random Forest. Balanced Random Forest increased `high` recall to **0.791**. This is useful if the goal is to catch more `high` cases, but the precision and overall balance became weaker. I chose HistGradientBoosting because it was more balanced overall.
 
-## 6. Overfitting and Hyperparameter Tuning
+## 4. SHAP Explainability and Final Predictions
 
-To check overfitting, I compared train AUC with validation AUC after tuning.
+For Task 2, I used SHAP to explain the final model. The most important global features were `age`, `workinghours`, `education`, `marital status_Husband`, and `sex_Female`. Age, education, and working hours make sense for income prediction. The gender-related feature is also important in the model, but this needs to be treated carefully because of fairness.
 
-| Model | Train AUC | Validation AUC | AUC gap |
-|---|---:|---:|---:|
-| Logistic Regression | 0.860 | 0.843 | 0.017 |
-| Random Forest | 0.909 | 0.853 | 0.056 |
-| HistGradientBoosting | 0.897 | 0.854 | 0.043 |
+![SHAP feature importance](../outputs/figures/feature_importance.png)
 
-Logistic Regression had the smallest gap, but it also had a lower validation AUC. Random Forest had the largest gap, which suggests it was more prone to overfitting. HistGradientBoosting sat between the two. It still had a visible gap, but the validation score was the best among the tuned models.
+I also created two local SHAP explanations from the validation set: one correct `high` prediction and one correct `low` prediction. I used validation examples because their labels are known. I did not use `income_test.csv` for this part, because that file has no labels.
 
-The main overfitting control step was hyperparameter tuning. For the tree-based models, I limited complexity through depth-related settings, leaf size, learning rate, number of iterations, and leaf nodes. This was especially helpful for Random Forest, since the untuned version fit the training data almost too well.
+For Task 3, I refit the final pipeline on all of `income.csv` and predicted labels for `income_test.csv`. The output file is `outputs/predictions.csv`. It has exactly **2000 rows**, the columns are exactly `id,income`, the `id` order matches `predictions_template.csv`, and the labels are only `high` or `low`.
 
----
+The model predicted **1028** people as `high`, so the predicted high rate is **0.514**. It predicted **972** people as `low`, with a rate of **0.486**. Since `income_test.csv` has no labels, I cannot know the real score on that file. The estimated performance comes from validation and cross-validation results. The final model had validation AUC **0.854** and validation accuracy **0.784**.
 
-## 7. Feature Selection and Class Imbalance
+## 5. Fairness and Conclusion
 
-For feature selection, I used ablation tests. The idea was simple: remove a feature group, retrain, and see whether the validation behavior changes.
+I checked gender fairness on the validation split using the `sex` column. The model predicted `high` much more often for Male than for Female. The Female positive prediction rate was **0.132**, while the Male rate was **0.386**. The gap was **0.254**.
 
-I compared:
+I also tested a model without `sex`. The gap decreased to **0.228**, but it did not go away. This shows that simply removing a protected attribute is not enough. Other variables can still carry similar information.
 
-- the full feature set
-- the feature set without the high-missing columns
-- the feature set without `sex`
-
-The results were close. Removing the high-missing columns gave a best AUC of **0.853**, almost the same as the full model. Removing `sex` also produced a best AUC of **0.853**. So neither group was the single reason the model worked.
-
-I also tested `class_weight="balanced"` for Logistic Regression and Random Forest. Balanced Random Forest raised `high` recall to **0.791**, which would be attractive if the main goal was to catch as many `high` cases as possible. The tradeoff was weaker precision and AUC balance. I kept HistGradientBoosting as the final model because its overall validation profile was more stable.
-
----
-
-## 8. Explainability
-
-For Task 2, I used **SHAP** to explain the final model. The most important global features were:
-
-`age`, `workinghours`, `education`, `marital status_Husband`, and `sex_Female`.
-
-These results make practical sense. Age, education, and working hours can be related to income. Marital status and gender-related variables may also capture patterns in the dataset, but they need to be interpreted carefully because they raise fairness concerns.
-
-![Feature importance](../outputs/figures/feature_importance.png)
-
-I also generated two local explanations:
-
-- one correct `high` prediction from the validation set
-- one correct `low` prediction from the validation set
-
-I used validation examples for these local explanations because their true labels are known. I did not use examples from `income_test.csv` for explanation claims, since that file has no labels.
-
----
-
-## 9. Final Prediction Output
-
-For Task 3, I refit the final pipeline on all of `income.csv` and used it to predict labels for `income_test.csv`. The submitted prediction file is `outputs/predictions.csv`.
-
-Verification checks:
-
-- The file contains exactly **2000 rows**.
-- The columns are exactly `id,income`.
-- The `id` order matches `predictions_template.csv`.
-- The predicted labels are only `high` or `low`.
-- There is no extra unnamed index column.
-
-The model predicted **1028** people as `high`, giving a predicted high rate of **0.514**. The other **972** rows were predicted as `low`, with a rate of **0.486**.
-
-Because `income_test.csv` has no labels, I cannot know the real score on that file. My estimated performance comes from validation and cross-validation results. The final model reached validation AUC **0.854** and validation accuracy **0.784**, with usable precision and recall for both classes.
-
----
-
-## 10. Gender Fairness
-
-I checked gender fairness using the `sex` column on the validation split. The final model predicted `high` much more often for the male group than for the female group. The Female positive prediction rate was **0.132**, while the Male positive prediction rate was **0.386**. That gives a positive prediction rate gap of **0.254**.
-
-I also tested a model variant without `sex`. The gap went down to **0.228**, but it did not disappear. This is the key point: removing a protected attribute does not automatically make a model fair. Other variables can still behave like proxies.
-
-To improve this in a real setting, I would bring fairness metrics into model selection directly, inspect likely proxy variables, and test threshold changes on validation data. I did not tune group-specific thresholds here because I wanted the final prediction rule to stay simple and reproducible.
-
----
-
-## 11. Conclusion
-
-The final model is HistGradientBoosting. It had the best overall validation result, with AUC **0.854**, accuracy **0.784**, and reasonable precision and recall for both income classes. Hyperparameter tuning helped control overfitting, and the ablation tests showed that removing high-missing columns or `sex` did not strongly change AUC.
-
-SHAP pointed to age, working hours, education, marital status, and gender-related features as important model drivers. The prediction file was generated successfully for all 2000 rows in `income_test.csv`.
-
-The model is useful, but it is not perfect. The fairness check showed a clear difference in positive prediction rates between Female and Male groups. Removing `sex` helped only slightly, so a stronger fairness-aware workflow would need to include fairness metrics during model or threshold selection.
+Overall, HistGradientBoosting was the best model for this assignment. It had the best validation AUC, reasonable precision and recall, and it produced a valid prediction file for all 2000 unlabeled test rows. The main weakness is fairness. If I continued this work, I would include fairness metrics during model selection and test threshold changes on validation data before making final predictions.
