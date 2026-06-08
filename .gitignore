@@ -36,6 +36,8 @@ reports/*
 !reports/README.md
 !reports/*.md
 reports/report_draft_tr.md
+reports/report_notes_tr.md
+reports/final_model_selection_memo_tr.md
 
 # Internal planning and assignment prompt files
 .codex/
