@@ -50,7 +50,8 @@ Bu dosya AI destekli muhendislik (AI-assisted engineering) icin projenin calisan
 
 - Tekrar uretilebilir bir Python pipeline kullan.
 - Train/validation veya cross-validation ile deneyleri ayir.
-- Preprocessing icin `ColumnTransformer`, `SimpleImputer`, `OneHotEncoder` ve gerekirse `StandardScaler` kullan.
+- T2 sonunda preprocessing icin `ColumnTransformer`, `SimpleImputer`, `OneHotEncoder`, `FunctionTransformer` ve `StandardScaler` altyapisi eklendi.
+- Kategorik pipeline missing-category imputation sonrasi degerleri string'e cevirir; bu, string/NaN tip karisimi kaynakli encoder hatalarini engeller.
 - Baseline model olarak Logistic Regression veya Decision Tree dusun.
 - Ensemble model olarak Random Forest, Gradient Boosting veya HistGradientBoosting dusun.
 - Overfitting icin train/validation skorlarini karsilastir.
@@ -58,6 +59,7 @@ Bu dosya AI destekli muhendislik (AI-assisted engineering) icin projenin calisan
 - Fairness icin cinsiyet gruplarina gore accuracy, precision, recall, positive prediction rate ve error rate hesapla.
 - Ayrintili teknik tasarim icin `docs/technical-design.md` kaynak alinacak.
 - Technical design asamasi implementation-ready olarak isaretlendi.
+- `scripts/check_preprocessing.py` train/test schema ve preprocessing fit/transform akisini dogrular.
 
 ## Bilinen Ortam Durumu
 

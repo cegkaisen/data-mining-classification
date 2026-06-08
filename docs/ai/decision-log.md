@@ -299,3 +299,16 @@ Bu altyapi T2 ve sonraki tasklar icin tekrar uretilebilir ve izole bir calisma o
 
 Sonuclar:
 `pip check` temiz gecti. Smoke test `src`, required data files ve ana dependency importlarini dogruladi. SHAP ve LIME importlari basarili.
+
+2026-06-08 - T2 data contract ve preprocessing altyapisi tamamlandi
+Baglam:
+T2 icin leakage-safe veri sozlesmesi, feature group varyantlari, train/test validation ve `sklearn` preprocessing bileseni istendi.
+
+Karar:
+`src/preprocessing.py` eklendi. Numeric pipeline median imputation ve optional scaling kullanir. Categorical pipeline missing-category imputation, string normalization ve one-hot encoding kullanir. `scripts/check_preprocessing.py` eklendi.
+
+Gerekce:
+Kategorik kolonlarda string degerler ve `NaN` karisimi `OneHotEncoder` icin tip hatasi yaratabildigi icin imputation sonrasi string normalization eklendi. Bu, preprocessing'i sonraki model tasklari icin daha saglam yapar.
+
+Sonuclar:
+Smoke test ve preprocessing check basarili. Ham veri dosyalarinda degisiklik yok.
