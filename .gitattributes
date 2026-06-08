@@ -1,0 +1,15 @@
+* text=auto
+
+*.csv text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.ipynb text eol=lf
+
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.joblib binary
+*.pkl binary
+*.pickle binary
