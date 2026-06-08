@@ -107,6 +107,18 @@ def overfitting_summary(
     return summary
 
 
+def high_positive_auc_scorer(estimator, X, y_true, positive_label: str = "high") -> float:
+    """Score an estimator with ROC AUC using `high` as the positive class."""
+    y_proba = estimator.predict_proba(X)
+    positive_scores = _positive_scores_from_classes(
+        y_proba,
+        estimator.classes_,
+        positive_label,
+    )
+    y_binary = pd.Series(y_true).eq(positive_label).astype(int)
+    return roc_auc_score(y_binary, positive_scores)
+
+
 def _as_positive_scores(y_proba, classes, positive_label: str) -> np.ndarray:
     scores = np.asarray(y_proba)
     if scores.ndim == 2:

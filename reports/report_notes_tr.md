@@ -14,3 +14,23 @@
 - Bu sonuclar final model secimi degildir; T6-T8 tuning, ablation ve fairness analizleri sonrasi karar verilecektir.
 - `income_test.csv` bu asamada model secimi veya threshold belirlemek icin kullanilmadi.
 
+## T6 - Hyperparameter tuning ve overfitting
+
+- Tuning (hyperparameter tuning) sadece training split uzerinde 3-fold StratifiedKFold ile yapildi; validation split final karsilastirma icin ayrik tutuldu.
+- En iyi validation AUC HistGradientBoosting / tuned_full icin 0.854 olarak goruldu.
+- AUC train-validation gap ozeti: HistGradientBoosting: AUC gap 0.043; Logistic Regression: AUC gap 0.017; Random Forest: AUC gap 0.056.
+
+## T7 - Feature ablation
+
+- High-missing kolonlari cikarilan en iyi varyant Random Forest ile validation AUC 0.853 verdi.
+- `sex` cikarilan en iyi varyant Random Forest ile validation AUC 0.853 verdi.
+- Final model ailesinde positive prediction rate gap full icin 0.254, sex removed icin 0.228; bu fairness karsilastirmasi icin ayrica saklandi.
+- Bu sonuclar feature selection (ozellik secimi) ve fairness tartismasi icin kanit olarak saklandi.
+
+## T8 - Class imbalance ve final model selection
+
+- Class weight balanced varyantlarinda en iyi validation AUC Random Forest icin 0.851 oldu.
+- Balanced varyant Random Forest high recall 0.791 ile daha yuksek recall verdi, ancak final aday AUC dengesinde daha iyi kaldi.
+- Final aday HistGradientBoosting / tuned_full olarak secildi; validation AUC 0.854, high recall 0.628.
+- Final aday icin validation setinde sex bazli positive prediction rate gap 0.254; fairness (adalet) tartismasinda bu sayi kullanilacak.
+- `income_test.csv` model secimi, tuning veya threshold belirleme icin kullanilmadi.

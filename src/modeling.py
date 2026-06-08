@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -57,3 +58,21 @@ def build_pipeline(preprocessor, model) -> Pipeline:
         ]
     )
 
+
+def get_tuning_grids() -> dict[str, dict[str, list[Any]]]:
+    """Return small hyperparameter grids keyed by model name."""
+    return {
+        "Logistic Regression": {
+            "model__C": [0.1, 1.0, 10.0],
+        },
+        "Random Forest": {
+            "model__max_depth": [6, 10, None],
+            "model__min_samples_leaf": [1, 5],
+            "model__max_features": ["sqrt", None],
+        },
+        "HistGradientBoosting": {
+            "model__max_iter": [100, 150],
+            "model__learning_rate": [0.05, 0.08],
+            "model__max_leaf_nodes": [15, 31],
+        },
+    }
